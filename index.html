@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School Formula Calculator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; margin: 40px; }
+        .box { max-width: 450px; margin: 0 auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: #00adb5; margin-top: 0; }
+        label { display: block; margin: 10px 0 4px; font-weight: bold; color: #ccc; }
+        input, select, button { width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #333; background: #252525; color: white; font-size: 15px; box-sizing: border-box; }
+        button { background: #00adb5; font-weight: bold; cursor: pointer; border: none; margin-top: 10px; }
+        button:hover { background: #008087; }
+        .result-panel { margin-top: 20px; padding: 15px; background: #252525; border-radius: 6px; border-left: 5px solid #00adb5; font-size: 15px; line-height: 1.5; color: #00adb5; font-family: monospace; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>✏️ School Math Assistant</h2>
+        <form method="POST">
+            
+            <label>Choose Topic:</label>
+            <select name="formula_type" id="formula_type" onchange="toggleSections()">
+                <option value="indices" {% if formula_type == 'indices' %}selected{% endif %}>🔢 Laws of Indices (Grade 7)</option>
+                <option value="pythagoras" {% if formula_type == 'pythagoras' %}selected{% endif %}>📐 Pythagoras Theorem</option>
+            </select>
+
+            <!-- SECTION A: LAWS OF INDICES -->
+            <div id="indices_section">
+                <label>Base (a):</label>
+                <input type="number" step="any" name="base" placeholder="e.g. 2" value="{{ inputs.base }}">
+                
+                <label>Operation Rule:</label>
+                <select name="indices_op">
+                    <option value="multiply" {% if inputs.indices_op == 'multiply' %}selected{% endif %}>am × an (Add Powers)</option>
+                    <option value="divide" {% if inputs.indices_op == 'divide' %}selected{% endif %}>am ÷ an (Subtract Powers)</option>
+                    <option value="power_of_power" {% if inputs.indices_op == 'power_of_power' %}selected{% endif %}>(am)n (Multiply Powers)</option>
+                </select>
+
+                <label>First Power (m):</label>
+                <input type="number" step="any" name="pow1" placeholder="e.g. 3" value="{{ inputs.pow1 }}">
+                <label>Second Power (n):</label>
+                <input type="number" step="any" name="pow2" placeholder="e.g. 4" value="{{ inputs.pow2 }}">
+            </div>
+
+            <!-- SECTION B: PYTHAGORAS THEOREM -->
+            <div id="pythagoras_section" class="hidden">
+                <label>What are you solving for?</label>
+                <select name="pythag_find" id="pythag_find" onchange="togglePythagInputs()">
+                    <option value="hypotenuse" {% if inputs.pythag_find == 'hypotenuse' %}selected{% endif %}>Hypotenuse (c)</option>
+                    <option value="leg_a" {% if inputs.pythag_find == 'leg_a' %}selected{% endif %}>Side Length (a)</option>
+                </select>
+
+                <div id="div_side_a">
+                    <label>Length of Side a:</label>
+                    <input type="number" step="any" name="side_a" placeholder="e.g. 3" value="{{ inputs.side_a }}">
+                </div>
+                <div id="div_side_b">
+                    <label>Length of Side b:</label>
+                    <input type="number" step="any" name="side_b" placeholder="e.g. 4" value="{{ inputs.side_b }}">
+                </div>
+                <div id="div_side_c" class="hidden">
+                    <label>Length of Hypotenuse c:</label>
+                    <input type="number" step="any" name="side_c" placeholder="e.g. 5" value="{{ inputs.side_c }}">
+                </div>
+            </div>
+
+            <button type="submit">Execute Formula</button>
+        </form>
+
+        {% if result %}
+        <div class="result-panel">
+            <strong>Calculation Result:</strong><br>
+            {{ result }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Interface management script -->
+    <script>
+        function toggleSections() {
+            var type = document.getElementById('formula_type').value;
+            document.getElementById('indices_section').classList.toggle('hidden', type !== 'indices');
+            document.getElementById('pythagoras_section').classList.toggle('hidden', type !== 'pythagoras');
+            if(type === 'pythagoras') togglePythagInputs();
+        }
+        function togglePythagInputs() {
+            var find = document.getElementById('pythag_find').value;
+            document.getElementById('div_side_a').classList.toggle('hidden', find === 'leg_a');
+            document.getElementById('div_side_b').classList.remove('hidden');
+            document.getElementById('div_side_c').classList.toggle('hidden', find === 'hypotenuse');
+        }
+        // Run once on load to maintain position status state
+        toggleSections();
+    </script>
+</body>
+</html>
